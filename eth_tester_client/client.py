@@ -53,6 +53,8 @@ def with_lock(client_method):
         self._evm_lock.acquire()
         try:
             return client_method(self, *args, **kwargs)
+        except Exception as e:
+            raise
         finally:
             self._evm_lock.release()
 
@@ -249,6 +251,8 @@ class EthTesterClient(object):
     def send_transaction(self, *args, **kwargs):
         try:
             self._send_transaction(*args, **kwargs)
+        except Exception as e:
+            raise
         finally:
             self.mine_block()
         return encode_32bytes(self.evm.last_tx.hash)
